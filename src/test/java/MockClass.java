@@ -1,5 +1,3 @@
-package src.test.java;
-
 import com.tropicalbastos.jsonserializr.JsonField;
 
 public class MockClass {
