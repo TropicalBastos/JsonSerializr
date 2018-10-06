@@ -1,6 +1,7 @@
 import com.tropicalbastos.jsonserializr.JsonField;
+import com.tropicalbastos.jsonserializr.JsonSerializeable;
 
-public class MockClass {
+public class MockClass implements JsonSerializeable {
 
     @JsonField
     private String name;

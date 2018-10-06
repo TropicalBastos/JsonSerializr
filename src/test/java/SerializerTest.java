@@ -15,4 +15,17 @@ public class SerializerTest {
         }
     }
 
+    @Test public void serializesClassField(){
+        MockClass mc = new MockClass("Ian", 24);
+        MockClassParent mockClassParent = new MockClassParent(mc);
+        Serializer serializer = new Serializer();
+        try{
+            String json = serializer.serialize(mockClassParent);
+            assertEquals("{\"person\":{\"name\":\"Ian\",\"age\":\"24\"}", json);
+        }catch(JsonSerializeException e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
 }

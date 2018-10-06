@@ -19,7 +19,12 @@ public class Serializer {
                     try{
                         value = (String) field.get(o);
                     }catch(ClassCastException e){
-                        value = field.get(o).toString();
+                        Object fieldObj = field.get(o);
+                        if(fieldObj instanceof JsonSerializeable){
+                            value = trimStringByString(serialize(fieldObj), "\"");
+                        }else{
+                            throw new JsonSerializeException(e.getMessage());
+                        }
                     }
                     jsonElements.put(getSerializedKey(field), value);
                 }
@@ -46,6 +51,21 @@ public class Serializer {
            .map(entry -> "\"" + entry.getKey() + "\":\"" + (String) entry.getValue() + "\"")
            .collect(Collectors.joining(","));
         return "{" + elements + "}";
+    }
+
+    protected String trimStringByString(String text, String trimBy) {
+        int beginIndex = 0;
+        int endIndex = text.length();
+    
+        while (text.substring(beginIndex, endIndex).startsWith(trimBy)) {
+            beginIndex += trimBy.length();
+        } 
+    
+        while (text.substring(beginIndex, endIndex).endsWith(trimBy)) {
+            endIndex -= trimBy.length();
+        }
+    
+        return text.substring(beginIndex, endIndex);
     }
 
 }
