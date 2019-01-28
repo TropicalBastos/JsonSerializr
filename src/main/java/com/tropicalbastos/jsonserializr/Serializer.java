@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 import java.util.Objects;
+import java.util.List;
 
 public class Serializer {
 
@@ -17,7 +18,12 @@ public class Serializer {
                 if(field.isAnnotationPresent(JsonField.class)){
                     String value;
                     try{
-                        value = (String) field.get(o);
+                        Object f = field.get(o);
+                        if(Number.class.isAssignableFrom(f.getClass())){
+                            value = f.toString();
+                        } else {
+                            value = (String) field.get(o);
+                        }
                     }catch(ClassCastException e){
                         Object fieldObj = field.get(o);
                         if(fieldObj instanceof JsonSerializeable){
@@ -35,6 +41,21 @@ public class Serializer {
         }catch(IllegalAccessException e){
             throw new JsonSerializeException(e.getMessage());
         }
+    }
+
+    public <T> String serialize(List<T> list) throws JsonSerializeException {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for(int i = 0; i < list.size(); i++) {
+            try {
+                sb.append(serialize(list.get(i)) + ((i == list.size() - 1) ? "" : ","));
+            } catch(JsonSerializeException e) {
+                throw e;
+            }
+        }
+        sb.append("]");
+        System.out.println(sb.toString());
+        return sb.toString();
     }
 
     public String getSerializedKey(Field field){
