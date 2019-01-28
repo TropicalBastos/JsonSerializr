@@ -24,7 +24,7 @@ public class SerializerTest {
         Serializer serializer = new Serializer();
         try{
             String json = serializer.serialize(mockClassParent);
-            assertEquals("{\"person\":{\"name\":\"Ian\",\"age\":\"24\"}", json);
+            assertEquals("{\"person\":{\"name\":\"Ian\",\"age\":\"24\"}}", json);
         }catch(JsonSerializeException e) {
             System.out.println(e.getMessage());
             fail();

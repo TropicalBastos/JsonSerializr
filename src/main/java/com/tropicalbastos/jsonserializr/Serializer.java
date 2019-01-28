@@ -10,6 +10,7 @@ import java.util.List;
 public class Serializer {
 
     public String serialize(Object o) throws JsonSerializeException {
+        boolean nested = false;
         try {
             Class<?> objectClass = Objects.requireNonNull(o).getClass();
             Map<String, String> jsonElements = new HashMap<>();
@@ -28,6 +29,7 @@ public class Serializer {
                         Object fieldObj = field.get(o);
                         if(fieldObj instanceof JsonSerializeable){
                             value = trimStringByString(serialize(fieldObj), "\"");
+                            nested = true;
                         }else{
                             throw new JsonSerializeException(e.getMessage());
                         }
@@ -36,7 +38,7 @@ public class Serializer {
                 }
             }
 
-            return toJsonString(jsonElements);
+            return toJsonString(jsonElements, nested);
 
         }catch(IllegalAccessException e){
             throw new JsonSerializeException(e.getMessage());
@@ -54,7 +56,6 @@ public class Serializer {
             }
         }
         sb.append("]");
-        System.out.println(sb.toString());
         return sb.toString();
     }
 
@@ -66,10 +67,10 @@ public class Serializer {
         return annotatedValue;
     }
 
-    public String toJsonString(Map<String, String> map){
+    public String toJsonString(Map<String, String> map, boolean nested){
         String elements = map.entrySet()
            .stream()
-           .map(entry -> "\"" + entry.getKey() + "\":\"" + (String) entry.getValue() + "\"")
+           .map(entry -> "\"" + entry.getKey() + (nested ? "\":" : "\":\"") + (String) entry.getValue() + (nested ? "" : "\""))
            .collect(Collectors.joining(","));
         return "{" + elements + "}";
     }
