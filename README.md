@@ -68,7 +68,7 @@ try {
 
 ## Nesting
 
-Nesting fields is also supported, lets say you have a parent defined below:
+Nesting fields is also supported, see below:
 
 ```java
 public class PersonContainer {
